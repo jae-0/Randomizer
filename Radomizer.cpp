@@ -22,18 +22,32 @@ int main() {
     random_device rd;
     mt19937 gen(rd());
 
-    //표준편차에 맞게 중심 좌표들 생성
-    normal_distribution<double> distributionx(x, stddev);
+    //조건에 맞는 좌표 생성 (현재 : Gateway 중심 65m 안에 있는 노드들만 생성하게 설정)
     for (int i = 0; i < num; ++i) {
-        double x = distributionx(gen);
-        arrx[i] = x;
+        normal_distribution<double> distributionx(x, stddev);
+        double m = distributionx(gen);
+        normal_distribution<double> distributiony(y, stddev);
+        double n = distributiony(gen);
+        if (65 < sqrt((x - m) * (x - m) + (y - n) * (y - n))) {
+            i--;
+            continue;
+        }
+        arrx[i] = m;
+        arry[i] = n;
     }
 
-    normal_distribution<double> distributiony(y, stddev);
-    for (int i = 0; i < num; ++i) {
-        double y = distributiony(gen);
-        arry[i] = y;
-    }
+    ////표준편차에 맞게 중심 좌표들 생성
+    //normal_distribution<double> distributionx(x, stddev);
+    //for (int i = 0; i < num; ++i) {
+    //    double x = distributionx(gen);
+    //    arrx[i] = x;
+    //}
+
+    //normal_distribution<double> distributiony(y, stddev);
+    //for (int i = 0; i < num; ++i) {
+    //    double y = distributiony(gen);
+    //    arry[i] = y;
+    //}
 
 
 
@@ -44,20 +58,20 @@ int main() {
     }
 
     srand((unsigned)time(NULL));
-    int k = 11;
+    int k = 12;
 
-    ////SF 균등하게 분포
-    //for (int i = 0; i < num; i++) {
-    //    cout << "**.loRaNodes[" << i << "].**initialLoRaSF = " << k-- << '\n';
-    //    cout << "**.loRaNodes[" << i << "].**initialLoRaTP = " << rand() % 11 + 2 << "dBm\n";
-    //    if (k == 6) k = 12;
-    //}
-
-    //SF 12로 고정
+    //SF 균등하게 분포
     for (int i = 0; i < num; i++) {
-        cout << "**.loRaNodes[" << i << "].**initialLoRaSF = " << 12 << '\n';
+        cout << "**.loRaNodes[" << i << "].**initialLoRaSF = " << k-- << '\n';
         cout << "**.loRaNodes[" << i << "].**initialLoRaTP = " << rand() % 11 + 2 << "dBm\n";
+        if (k == 6) k = 12;
     }
+
+    ////SF 12로 고정
+    //for (int i = 0; i < num; i++) {
+    //    cout << "**.loRaNodes[" << i << "].**initialLoRaSF = " << 12 << '\n';
+    //    cout << "**.loRaNodes[" << i << "].**initialLoRaTP = " << rand() % 11 + 2 << "dBm\n";
+    //}
 
     cout << "\n/////////////////////////////////////////////////\n";
     //networkseverapp.cc ninitialx값과 y값 변경하는 코드 추가
